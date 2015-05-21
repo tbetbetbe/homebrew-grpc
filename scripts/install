@@ -74,10 +74,21 @@ __grpc_install_with_brew() {
     # We need version of protobuf that already has C# and objectiveC support, which haven't been released yet,
     # so we just install HEAD for now.
     # TODO(jtattermusch): Ideally, we should depend on the revision of protobufs we refer to in third_party/protobuf.
-    __grpc_brew_install --HEAD google-protobuf
+    __grpc_brew_install --HEAD $(__grpc_real_target google-protobuf)
 
     # Install gRPC
-    __grpc_brew_install --HEAD grpc
+    __grpc_brew_install --HEAD $(__grpc_real_target grpc)
+}
+
+# Allow the script to be test locally by setting $LOCAL_ROOT to
+# the dir containing the formula
+__grpc_real_target() {
+    local target=shift
+    if [[ -n $LOCAL_ROOT ]]; then
+        echo "$LOCAL_ROOT/${target}.rb"
+    else
+        echo $target
+    fi
 }
 
 __grpc_install_ruby_pkg() {
